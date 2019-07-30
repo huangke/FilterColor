@@ -639,7 +639,7 @@
     "blockPanel": {
       "__id__": 12
     },
-    "text": "hello",
+    "blockSpeed": 100,
     "blockPrefab": {
       "__uuid__": "29327df5-8511-423a-bc45-26d165fe6332"
     },
