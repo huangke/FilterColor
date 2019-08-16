@@ -2,7 +2,7 @@
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class NewClass extends cc.Component {
+export default class FixScreen extends cc.Component {
     curDR: cc.Size
     setCanvasSize(){
         var Canvas = this.node.getComponent(cc.Canvas)
@@ -20,12 +20,12 @@ export default class NewClass extends cc.Component {
             Canvas.fitWidth = true
             cc.log("Canvas.fitWidth");
         }
-    },
+    }
     start () {
+        // this.setCanvasSize()
         this.resize()
-    },
+    }
     resize() {
-    
         var cvs = cc.find('Canvas').getComponent(cc.Canvas);
         //保存原始设计分辨率，供屏幕大小变化时使用
         if(!this.curDR){
@@ -57,5 +57,8 @@ export default class NewClass extends cc.Component {
         cvs.node.width = finalW;
         cvs.node.height = finalH;
         cvs.node.emit('resize');
+
+        cc.log("new width " + finalW);
+        cc.log("new height " + finalH);
     }
 }

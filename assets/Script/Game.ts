@@ -1,5 +1,4 @@
 import BlockLine from "./BlockLine"
-import Block from "./Block";
 
 const {ccclass, property} = cc._decorator;
 
@@ -18,6 +17,9 @@ export default class Game extends cc.Component {
     @property
     blockSize: number = 0;
 
+    @property(cc.Node)
+    filterLine: cc.Node = null;
+
     _blockPanelHeight: number = 0;
     _blockPalenWeight: number = 600;
     _blockPool: cc.NodePool = null;
@@ -30,10 +32,11 @@ export default class Game extends cc.Component {
     start () {
         this._blockPool = new cc.NodePool();
 
-        // setTimeout(() => {
-        //     this._blockPanelHeight = this.blockPanel.height;
-        //     this.spawnBlocks();
-        // }, 100);
+        setTimeout(() => {
+            this._blockPanelHeight = this.blockPanel.height;
+            cc.log("_blockPanelHeight " + this._blockPanelHeight);
+            // this.spawnBlocks();
+        }, 100);
     }
 
     instantiateBlock(bl:BlockLine) {
