@@ -1,4 +1,5 @@
 import Game from "./Game"
+import {BlockType} from "./BlockType"
 
 const {ccclass, property} = cc._decorator;
 
@@ -10,6 +11,8 @@ export default class Block extends cc.Component{
     
     _isFall: boolean = false;
     _game: Game = null;
+
+    _type: BlockType = BlockType.RED;
 
     init (game:Game, speed:number) {
         this._game = game;

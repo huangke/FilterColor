@@ -1,4 +1,5 @@
 import BlockLine from "./BlockLine"
+import Line from "./Line"
 
 const {ccclass, property} = cc._decorator;
 
@@ -20,6 +21,9 @@ export default class Game extends cc.Component {
     @property(cc.Node)
     filterLine: cc.Node = null;
 
+    @property(Line)
+    line: Line = null;
+
     _blockPanelHeight: number = 0;
     _blockPalenWeight: number = 600;
     _blockPool: cc.NodePool = null;
@@ -29,13 +33,18 @@ export default class Game extends cc.Component {
     _blockLineArray: Array<BlockLine> = [];
     _topBlockLine: BlockLine = null;
 
+    get PanelHeight ()
+    {
+        return this._blockPanelHeight;
+    }
+
     start () {
         this._blockPool = new cc.NodePool();
 
         setTimeout(() => {
             this._blockPanelHeight = this.blockPanel.height;
             cc.log("_blockPanelHeight " + this._blockPanelHeight);
-            // this.spawnBlocks();
+            this.spawnBlocks();
         }, 100);
     }
 
@@ -76,6 +85,9 @@ export default class Game extends cc.Component {
 
     update (dt:number) {
         if (this._startFall) {
+            
+            this.line.updateLine(dt);
+
             //update each block line height
             for (let i = this._blockLineArray.length - 1; i >= 0; i--) {
                 if (!this._blockLineArray[i].updateHeight(dt)) {
