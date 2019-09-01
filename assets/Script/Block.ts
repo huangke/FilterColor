@@ -14,16 +14,40 @@ export default class Block extends cc.Component{
 
     _type: BlockType = BlockType.RED;
 
-    init (game:Game, speed:number) {
+    _isDestroy: boolean = false;
+
+    init (game:Game, speed:number, type:BlockType) {
         this._game = game;
         this._speed = speed;
+        this._type = type;
+        this.des.string = type.toString();
     }
 
     startFall () {
         this._isFall = true;
+        this._isDestroy = false;
     }
 
     recoverySelf () {
+        this._isDestroy = true;
         this._game.recoveryBlock(this.node);
+    }
+
+    filter (lineType:BlockType) {
+        if (this._type === lineType) {
+            this.recoverySelf();
+        }
+    }
+
+    tryToRecovery () {
+        if (!this._isDestroy) {
+            this.recoverySelf();
+        }
+    }
+
+    updatePos (y:number) {
+        if (!this._isDestroy) {
+            this.node.y = y;
+        }
     }
 }

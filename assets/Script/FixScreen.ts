@@ -26,7 +26,7 @@ export default class FixScreen extends cc.Component {
         this.resize()
     }
     resize() {
-        var cvs = cc.find('Canvas').getComponent(cc.Canvas);
+        var cvs =  this.node.getComponent(cc.Canvas);
         //保存原始设计分辨率，供屏幕大小变化时使用
         if(!this.curDR){
             this.curDR = cvs.designResolution;

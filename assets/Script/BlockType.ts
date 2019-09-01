@@ -2,5 +2,6 @@
 export enum BlockType {
     RED,
     BLUE,
-    YELLOW
+    YELLOW,
+    COUNT
 }

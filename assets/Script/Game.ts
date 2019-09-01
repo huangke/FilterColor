@@ -1,5 +1,6 @@
 import BlockLine from "./BlockLine"
-import Line from "./Line"
+import FilterLine from "./FilterLine"
+import { BlockType } from "./BlockType";
 
 const {ccclass, property} = cc._decorator;
 
@@ -15,14 +16,16 @@ export default class Game extends cc.Component {
     @property(cc.Prefab)
     blockPrefab: cc.Prefab = null;
 
+    @property(cc.Prefab)
+    filterLinePrefab: cc.Prefab = null;
+
+    @property(cc.Node)
+    filterLineStartNode: cc.Node = null;
+
     @property
     blockSize: number = 0;
 
-    @property(cc.Node)
-    filterLine: cc.Node = null;
-
-    @property(Line)
-    line: Line = null;
+    _filterLine: FilterLine = null;
 
     _blockPanelHeight: number = 0;
     _blockPalenWeight: number = 600;
@@ -40,7 +43,7 @@ export default class Game extends cc.Component {
 
     start () {
         this._blockPool = new cc.NodePool();
-
+        this.createFilterLine();
         setTimeout(() => {
             this._blockPanelHeight = this.blockPanel.height;
             cc.log("_blockPanelHeight " + this._blockPanelHeight);
@@ -48,7 +51,14 @@ export default class Game extends cc.Component {
         }, 100);
     }
 
-    instantiateBlock(bl:BlockLine) {
+    createFilterLine () {
+        let line = cc.instantiate(this.filterLinePrefab);
+        this._filterLine = line.getComponent("FilterLine");
+        this._filterLine.init(this, this.blockPanel);
+        line.parent = this.blockPanel;
+    }
+
+    instantiateBlock(bl:BlockLine, pos:cc.Vec2) {
 		let block = null
 		if (this._blockPool && this._blockPool.size() > 0) {
 			block = this._blockPool.get();
@@ -56,11 +66,17 @@ export default class Game extends cc.Component {
 			block = cc.instantiate(this.blockPrefab)
 		}
         block.parent = this.blockPanel;
+        block.position = pos;
         let blockComponent = block.getComponent("Block");
-        blockComponent.init(this, this.blockSpeed);
+        blockComponent.init(this, this.blockSpeed, this.getBlockType());
         blockComponent.startFall();
         bl.pushBlock(blockComponent);
 		return block;
+    }
+
+    getBlockType ():BlockType {
+        let type = Math.floor((Math.random()*BlockType.COUNT));
+        return type;
     }
 
     spawnBlocks () {
@@ -71,13 +87,12 @@ export default class Game extends cc.Component {
         } else {
             topBlockHeight = this._topBlockLine.Height + this.blockSize;
         }
-        this._topBlockLine = new BlockLine(this.blockSpeed, topBlockHeight, this._blockPanelHeight, this.blockSize);
+        this._topBlockLine = new BlockLine(this, this.blockSpeed, topBlockHeight, this._blockPanelHeight, this.blockSize);
         this._blockLineArray.push(this._topBlockLine);
 
         for (let i = 0; i < this._blockPalenWeight / this.blockSize; i++) {
-            let block = this.instantiateBlock(this._topBlockLine);
-            block.x = -this._blockPalenWeight / 2 + this.blockSize * i + this.blockSize / 2;
-            block.y = this._topBlockLine.Height;
+            let block = this.instantiateBlock(this._topBlockLine, 
+                new cc.Vec2(-this._blockPalenWeight / 2 + this.blockSize * i + this.blockSize / 2, this._topBlockLine.Height));
         }
 
         this._startFall = true;
@@ -86,7 +101,7 @@ export default class Game extends cc.Component {
     update (dt:number) {
         if (this._startFall) {
             
-            this.line.updateLine(dt);
+            this._filterLine.updateLine(dt);
 
             //update each block line height
             for (let i = this._blockLineArray.length - 1; i >= 0; i--) {
