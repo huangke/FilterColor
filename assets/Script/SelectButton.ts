@@ -15,7 +15,9 @@ export default class SelectButton extends cc.Component {
     type: BlockType = BlockType.BLUE;
 
     onTouch () {
-        cc.log("touch");
+        if (cc.debug) {
+            cc.log("touch " + ["RED", "BLUE", "GREEN"][this.type]);
+        }
         this.game._filterLine.startMove(this.type);
     }
 }

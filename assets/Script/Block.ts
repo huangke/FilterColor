@@ -5,8 +5,13 @@ const {ccclass, property} = cc._decorator;
 
 @ccclass
 export default class Block extends cc.Component{
-    @property(cc.Label)
-    des: cc.Label = null;
+    @property(cc.Node)
+    red: cc.Node = null;
+    @property(cc.Node)
+    blue: cc.Node = null;
+    @property(cc.Node)
+    green: cc.Node = null;
+
     _speed: number = 0;
     
     _isFall: boolean = false;
@@ -16,11 +21,29 @@ export default class Block extends cc.Component{
 
     _isDestroy: boolean = false;
 
+    _lineIndex:number = -1;
+
     init (game:Game, speed:number, type:BlockType) {
         this._game = game;
         this._speed = speed;
+        this._type = type;  
+        this._lineIndex = -1;
+        this.refreshBlockType();
+    }
+
+    refreshBlockType () {
+        this.red.active = this._type === BlockType.RED;
+        this.blue.active = this._type === BlockType.BLUE;
+        this.green.active = this._type === BlockType.GREEN;
+    }
+
+    changgeBlockType () {
+        let type = this._type;
+        do{
+            type = Math.floor((Math.random()*BlockType.COUNT));
+        }while(type == this._type);
         this._type = type;
-        this.des.string = type.toString();
+        this.refreshBlockType();
     }
 
     startFall () {
@@ -33,9 +56,16 @@ export default class Block extends cc.Component{
         this._game.recoveryBlock(this.node);
     }
 
-    filter (lineType:BlockType) {
+    filter (lineType:BlockType, lineIndex:number) {
+        if (this._isDestroy || this._lineIndex == lineIndex) {
+            return;
+        }
+        
         if (this._type === lineType) {
             this.recoverySelf();
+        } else {
+            this.changgeBlockType();
+            this._lineIndex = lineIndex;
         }
     }
 

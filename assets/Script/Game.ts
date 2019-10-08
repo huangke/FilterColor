@@ -9,6 +9,10 @@ export default class Game extends cc.Component {
 
     @property(cc.Node)
     blockPanel: cc.Node = null;
+    @property(cc.Node)
+    blockNode: cc.Node = null;
+    @property(cc.Node)
+    fliterLineNode: cc.Node = null;
 
     @property
     blockSpeed: number = 500;
@@ -19,16 +23,13 @@ export default class Game extends cc.Component {
     @property(cc.Prefab)
     filterLinePrefab: cc.Prefab = null;
 
-    @property(cc.Node)
-    filterLineStartNode: cc.Node = null;
-
     @property
     blockSize: number = 0;
 
     _filterLine: FilterLine = null;
 
     _blockPanelHeight: number = 0;
-    _blockPalenWeight: number = 600;
+    _blockPalenWeight: number = 480;
     _blockPool: cc.NodePool = null;
     
     _startFall: boolean = false;
@@ -36,8 +37,7 @@ export default class Game extends cc.Component {
     _blockLineArray: Array<BlockLine> = [];
     _topBlockLine: BlockLine = null;
 
-    get PanelHeight ()
-    {
+    get PanelHeight () {
         return this._blockPanelHeight;
     }
 
@@ -55,7 +55,7 @@ export default class Game extends cc.Component {
         let line = cc.instantiate(this.filterLinePrefab);
         this._filterLine = line.getComponent("FilterLine");
         this._filterLine.init(this, this.blockPanel);
-        line.parent = this.blockPanel;
+        line.parent = this.fliterLineNode;
     }
 
     instantiateBlock(bl:BlockLine, pos:cc.Vec2) {
@@ -65,7 +65,7 @@ export default class Game extends cc.Component {
 		} else {
 			block = cc.instantiate(this.blockPrefab)
 		}
-        block.parent = this.blockPanel;
+        block.parent = this.blockNode;
         block.position = pos;
         let blockComponent = block.getComponent("Block");
         blockComponent.init(this, this.blockSpeed, this.getBlockType());
@@ -73,7 +73,7 @@ export default class Game extends cc.Component {
         bl.pushBlock(blockComponent);
 		return block;
     }
-
+    //random block type
     getBlockType ():BlockType {
         let type = Math.floor((Math.random()*BlockType.COUNT));
         return type;

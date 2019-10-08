@@ -1,6 +1,5 @@
 import Game from "./Game"
 import Block from "./Block"
-import FilterLine from "./FilterLine"
 
 export default class BlockLine {
 
@@ -33,13 +32,13 @@ export default class BlockLine {
 
     updateHeight (dt:number): boolean{
         this._height -= this._speed * dt;
-
-        if (this._game._filterLine.isMoving) {
-            let filterLinePos = this._game._filterLine.node.y;
+        let filterLine = this._game._filterLine;
+        if (filterLine.isMoving) {
+            let filterLinePos = filterLine.node.y;
             if (this._height <= filterLinePos && 
                 this._height + this._blockSize >= filterLinePos) {
                 this._blocks.forEach(block => {
-                    block.filter(this._game._filterLine.type);
+                    block.filter(filterLine.type, filterLine.LineIndex);
                 });
             }
         }

@@ -8,16 +8,18 @@ export default class FilterLine extends cc.Component {
     _game: Game = null;
     _startPos: cc.Vec2 = null;
 
-    @property
-    speed: number = 80;
+    speed: number = 600;
 
     type:BlockType = null;
 
-    isMoving = false;
+    isMoving:boolean = false;
+
+    _lineIndex:number = 0;
 
     init (game:Game, startNode:cc.Node) {
         this._game = game;
         this._startPos = new cc.Vec2(0, -startNode.getContentSize().height / 2);
+        this.node.setPosition(this._startPos);
     }
 
     startMove (type:BlockType){
@@ -28,8 +30,13 @@ export default class FilterLine extends cc.Component {
         this.node.position = this._startPos;
         this.isMoving = true;
         this.type = type;
+        this._lineIndex++;
     }
     
+    get LineIndex (){
+        return this._lineIndex;
+    }
+
     updateLine (dt) {
         if (this.isMoving) {
             this.node.y += this.speed * dt;
