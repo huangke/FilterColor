@@ -10,15 +10,28 @@ export default class FilterLine extends cc.Component {
 
     speed: number = 600;
 
-    type:BlockType = null;
+    _type: BlockType = null;
 
-    isMoving:boolean = false;
+    isMoving: boolean = false;
 
-    _lineIndex:number = 0;
+    _lineIndex: number = 0;
 
+    get LineIndex () {
+        return this._lineIndex;
+    }
+
+    get LineType () {
+        return this._type;
+    }
+    
     init (game:Game, startNode:cc.Node) {
         this._game = game;
         this._startPos = new cc.Vec2(0, -startNode.getContentSize().height / 2);
+        this.resetPos();
+    }
+
+    resetPos () {
+        this.node.active = false;
         this.node.setPosition(this._startPos);
     }
 
@@ -29,12 +42,8 @@ export default class FilterLine extends cc.Component {
         this.node.active = true;
         this.node.position = this._startPos;
         this.isMoving = true;
-        this.type = type;
+        this._type = type;
         this._lineIndex++;
-    }
-    
-    get LineIndex (){
-        return this._lineIndex;
     }
 
     updateLine (dt) {

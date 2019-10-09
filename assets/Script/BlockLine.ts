@@ -30,7 +30,13 @@ export default class BlockLine {
         this._blocks.push(block);
     }
 
-    updateHeight (dt:number): boolean{
+    recoveryBlock () {
+        this._blocks.forEach(block => {
+            block.recovery();
+        });
+    }
+
+    updatePos (dt:number): boolean{
         this._height -= this._speed * dt;
         let filterLine = this._game._filterLine;
         if (filterLine.isMoving) {
@@ -38,26 +44,26 @@ export default class BlockLine {
             if (this._height <= filterLinePos && 
                 this._height + this._blockSize >= filterLinePos) {
                 this._blocks.forEach(block => {
-                    block.filter(filterLine.type, filterLine.LineIndex);
+                    block.filter(filterLine.LineType, filterLine.LineIndex);
                 });
             }
         }
 
-        for (let i = this._blocks.length - 1; i >= 0; i--) {
-            if (this._blocks[i]._isDestroy) {
-                this._blocks.splice(i , 1);
-            }
-        }
+        // for (let i = this._blocks.length - 1; i >= 0; i--) {
+        //     if (this._blocks[i]._isFiltered) {
+        //         this._blocks.splice(i , 1);
+        //     }
+        // }
         this._blocks.forEach(block => {
             block.updatePos(this._height);
         });
 
         if (this._height - this._blockSize / 2 < -this._blockPanelHeight / 2) {
-            this._blocks.forEach(block => {
-                block.recoverySelf();
-            });
-            this._blocks = [];
-            return false;
+            for (let i = 0; i < this._blocks.length; i++) {
+                if (!this._blocks[i]._isFiltered) {
+                    return false;
+                }
+            }
         }
         return true;
     }
